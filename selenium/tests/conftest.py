@@ -52,6 +52,16 @@ def driver(pytestconfig):
             options.add_argument("--headless=new")
         options.add_argument("--window-size=1440,1200")
         options.add_argument("--disable-gpu")
+        options.add_argument("--disable-save-password-bubble")
+        options.add_argument("--disable-features=PasswordLeakDetection")
+        options.add_experimental_option(
+            "prefs",
+            {
+                "credentials_enable_service": False,
+                "profile.password_manager_enabled": False,
+                "profile.password_manager_leak_detection": False,
+            },
+        )
         instance = webdriver.Chrome(options=options)
 
     instance.set_window_size(1440, 1200)
