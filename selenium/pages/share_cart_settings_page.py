@@ -94,7 +94,15 @@ class ShareCartSettingsPage:
 
     def click_save_settings(self):
         current_tab = self.active_tab_slug()
-        self.wait.until(EC.element_to_be_clickable((By.NAME, "save"))).click()
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (
+                    By.XPATH,
+                    "//input[@type='submit' and @value='Save Settings']"
+                    " | //button[normalize-space()='Save Settings']",
+                )
+            )
+        ).click()
         self.wait.until(lambda driver: "scuf_saved=1" in driver.current_url)
         self.wait_for_tab(current_tab)
         self.wait.until(
@@ -117,6 +125,23 @@ class ShareCartSettingsPage:
 
     def checkbox_checked(self, identifier):
         return self.checkbox(identifier).is_selected()
+
+    def select_radio_option(self, group_label, option_label):
+        radio = self.wait.until(
+            EC.element_to_be_clickable(self._radio_option_locator(group_label, option_label))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", radio)
+        radio.click()
+        self.wait.until(lambda _: radio.is_selected())
+
+    def selected_radio_value(self, group_label):
+        radios = self.wait.until(
+            EC.presence_of_all_elements_located(self._radio_group_locator(group_label))
+        )
+        for radio in radios:
+            if radio.is_selected():
+                return radio.get_attribute("value")
+        raise AssertionError(f"No selected radio option found for '{group_label}'.")
 
     def enter_text(self, identifier, value):
         element = self.input(identifier)
@@ -180,7 +205,29 @@ class ShareCartSettingsPage:
             f"//label[normalize-space()={value} or .//span[normalize-space()={value}]]//textarea"
             " | "
             f"//label[normalize-space()={value} or .//span[normalize-space()={value}]]//select"
+            " | "
+            f"//tr[.//th[normalize-space()={value}]]//input"
+            " | "
+            f"//tr[.//th[normalize-space()={value}]]//textarea"
+            " | "
+            f"//tr[.//th[normalize-space()={value}]]//select"
             ")[1]",
+        )
+
+    def _radio_option_locator(self, group_label, option_label):
+        group = self._xpath_literal(str(group_label))
+        option = self._xpath_literal(str(option_label))
+        return (
+            By.XPATH,
+            f"//tr[.//th[normalize-space()={group}]]"
+            f"//label[contains(normalize-space(), {option})]//input[@type='radio']",
+        )
+
+    def _radio_group_locator(self, group_label):
+        group = self._xpath_literal(str(group_label))
+        return (
+            By.XPATH,
+            f"//tr[.//th[normalize-space()={group}]]//input[@type='radio']",
         )
 
     @staticmethod

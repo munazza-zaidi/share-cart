@@ -16,6 +16,6 @@ def test_display_settings_save_refresh_and_persist(share_cart_settings_page):
     page.click_save_settings()
     page.refresh_and_wait()
 
-    assert page.input_value("save_share_cart_menu_title") == "QA Saved Carts"
-    assert page.input_value("save_share_cart_end_point") == "qa-saved-carts"
-    assert page.input_value("share_cart_url_before_text") == "QA message above the share cart button."
+    assert page.input_value("Save Cart Menu Title") == "QA Saved Carts"
+    assert page.input_value("Save Cart Endpoint") == "qa-saved-carts"
+    assert page.input_value("Text Above Share Button") == "QA message above the share cart button."

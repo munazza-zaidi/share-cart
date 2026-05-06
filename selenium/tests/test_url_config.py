@@ -21,6 +21,6 @@ def test_url_config_save_refresh_and_persist(share_cart_settings_page):
     page.click_save_settings()
     page.refresh_and_wait()
 
-    assert page.input_value("share_cart_url_prefix") == "qa_ref"
-    assert page.input_value("share_cart_url_for_woo_key_length") == "10"
+    assert page.input_value("Link Prefix") == "qa_ref"
+    assert page.input_value("Link Code Length") == "10"
     assert "qa_ref=a1b2c3d4e5" in page.text_of((By.ID, "scuf-url-preview-text"))
